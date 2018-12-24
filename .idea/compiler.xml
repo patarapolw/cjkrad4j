@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="cjkrad4j.cjkrad4j.main" target="11" />
+      <module name="cjkrad4j.cjkrad4j.test" target="11" />
+      <module name="cjkrad4j.main" target="11" />
+      <module name="cjkrad4j.test" target="11" />
+      <module name="com..cjkrad4j.main" target="11" />
+      <module name="com..cjkrad4j.test" target="11" />
+      <module name="com.cjkrad4j.main" target="11" />
+      <module name="com.cjkrad4j.test" target="11" />
+      <module name="com.github.pat.cjkrad4j.main" target="11" />
+      <module name="com.github.pat.cjkrad4j.test" target="11" />
+      <module name="com.github.patarapolw.cjkrad4j.main" target="11" />
+      <module name="com.github.patarapolw.cjkrad4j.test" target="11" />
+      <module name="GitHubProjects.cjkrad4j.main" target="11" />
+      <module name="GitHubProjects.cjkrad4j.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

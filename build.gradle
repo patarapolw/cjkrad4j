@@ -1,19 +1,19 @@
-buildscript {
-    ext.kotlin_version = '1.3.11'
-
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.11'
+    id 'maven-publish'
+    id 'signing'
 }
 
-apply plugin: "kotlin"
+ext {
+    projectDescription = "A wrapper for mdbg.net's CC-CEDICT"
+    projectVersion = '0.1.0'
+    gitHubName = 'cjkrad4j'
+}
 
-group = 'com.github.patarapolw'
-version = '0.1.0'
+archivesBaseName = 'cjkrad'
+group = 'io.github.patarapolw'
+version = project.projectVersion
+description = project.projectDescription
 
 repositories {
     jcenter()
@@ -21,29 +21,82 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'org.xerial:sqlite-jdbc:3.25.2'
     
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.0.0'
 }
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = '1.8'
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = archivesBaseName
+                description = projectDescription
+                url = "https://github.com/patarapolw/$project.gitHubName"
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'patarapolw'
+                        name = 'Pacharapol Withayasakpunt'
+                        email = 'patarapolw@gmail.com'
+                    }
+                }
+                scm {
+                    connection = "scm:git:git@github.com:patarapolw/${project.gitHubName}.git"
+                    url = "https://github.com/patarapolw/${project.gitHubName}"
+                }
+            }
+
+            groupId group
+            artifactId archivesBaseName
+            version projectVersion
+
+            from components.java
+
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username sonatypeUsername
+                password sonatypePassword
+            }
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
     }
 }
 
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+signing {
+    sign configurations.archives
 }
-
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
-    }
-}
-
-

@@ -1,12 +1,12 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.11'
-    id 'maven-publish'
+    id 'maven'
     id 'signing'
 }
 
 ext {
-    projectDescription = "A wrapper for mdbg.net's CC-CEDICT"
-    projectVersion = '0.1.0'
+    projectDescription = "Porting of Python's cjkradlib to Kotlin"
+    projectVersion = '0.1.1'
     gitHubName = 'cjkrad4j'
 }
 
@@ -26,35 +26,56 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.0.0'
 }
 
-task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allJava
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc.destinationDir
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
+    archives javadocJar, sourcesJar
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = archivesBaseName
-                description = projectDescription
-                url = "https://github.com/patarapolw/$project.gitHubName"
+signing {
+    useGpgCmd()
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name archivesBaseName
+                packaging 'jar'
+                description projectDescription
+                url "https://github.com/patarapolw/$project.gitHubName"
+
+                scm {
+                    connection = "scm:git:git@github.com:patarapolw/${project.gitHubName}.git"
+                    url = "https://github.com/patarapolw/${project.gitHubName}"
+                }
+
                 licenses {
                     license {
                         name = 'The MIT License'
                         url = 'https://opensource.org/licenses/MIT'
                     }
                 }
+
                 developers {
                     developer {
                         id = 'patarapolw'
@@ -62,41 +83,7 @@ publishing {
                         email = 'patarapolw@gmail.com'
                     }
                 }
-                scm {
-                    connection = "scm:git:git@github.com:patarapolw/${project.gitHubName}.git"
-                    url = "https://github.com/patarapolw/${project.gitHubName}"
-                }
-            }
-
-            groupId group
-            artifactId archivesBaseName
-            version projectVersion
-
-            from components.java
-
-            artifact(sourceJar) {
-                classifier = 'sources'
-            }
-            artifact(javadocJar) {
-                classifier = 'javadoc'
             }
         }
     }
-
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
-            }
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        }
-    }
-}
-
-signing {
-    sign configurations.archives
 }

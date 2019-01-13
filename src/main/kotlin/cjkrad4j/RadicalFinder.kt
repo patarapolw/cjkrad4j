@@ -2,8 +2,8 @@ package cjkrad4j
 
 import java.sql.DriverManager
 
-class RadicalFinder (databaseUrl: String) {
-    private val conn = DriverManager.getConnection(databaseUrl)
+class RadicalFinder {
+    private val conn = DriverManager.getConnection("jdbc:sqlite::resource:cjkrad4j.db")
     data class RadicalData (
             val subCompositions: List<String>,
             val superCompositions: List<String>,

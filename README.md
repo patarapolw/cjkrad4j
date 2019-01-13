@@ -2,19 +2,23 @@
 
 Porting of [cjkradlib](https://github.com/patarapolw/cjkradlib) to Kotlin
 
-## Building and Installation
+## Installation
 
-- Clone the project from GitHub and `cd` into the project.
-- run `./gradlew build`
-- Copy `build/libs/cjkrad4j-0.1.0.jar` into `libs/` of the project of your choice. Create the folder if it isn't existed yet.
-- Add the follow lines into `dependencies` of your `build.gradle`.
+Add this line to `repositories`
 
 ```groovy
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+maven {
+    url 'https://oss.sonatype.org/content/groups/staging'
+}
 ```
 
-- Then, run `./gradlew build`.
-- You should be able to `import cjkrad4j.RadicalFinder`
+And this to dependencies
+
+```groovy
+implementation 'io.github.patarapolw:cjkrad:0.1.2'
+```
+
+The database file can be found here, [cjkrad4j.db](/cjkrad4j.db)
 
 ## Example
 
@@ -22,7 +26,7 @@ Porting of [cjkradlib](https://github.com/patarapolw/cjkradlib) to Kotlin
 import cjkrad4j.RadicalFinder
 
 fun main(args: Array<String>) {
-    val finder = RadicalFinder()
+    val finder = RadicalFinder("jdbc:sqlite:path/to/cjkrad4j.db")
     val result = finder['你']
     println(result.subCompositions)
     println(result.superCompositions)

@@ -6,7 +6,7 @@ plugins {
 
 ext {
     projectDescription = "Porting of Python's cjkradlib to Kotlin"
-    projectVersion = '0.1.1'
+    projectVersion = '0.1.2'
     gitHubName = 'cjkrad4j'
 }
 

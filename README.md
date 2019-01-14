@@ -4,15 +4,7 @@ Porting of [cjkradlib](https://github.com/patarapolw/cjkradlib) to Kotlin
 
 ## Installation
 
-Add this line to `repositories`
-
-```groovy
-maven {
-    url 'https://oss.sonatype.org/content/groups/staging'
-}
-```
-
-And this to dependencies
+It is now available in `mavenCentral()`, so add this to your dependencies
 
 ```groovy
 implementation 'io.github.patarapolw:cjkrad:0.1.2'
